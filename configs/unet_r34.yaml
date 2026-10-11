@@ -1,0 +1,33 @@
+# Baseline: U-Net with an ImageNet-pretrained ResNet-34 encoder, ISIC 2018 Task 1
+seed: 42
+device: mps
+
+data:
+  image_dir: data/processed/images
+  mask_dir: data/processed/masks
+  train_csv: splits/train.csv
+  val_csv: splits/val.csv
+  image_size: 256
+  num_workers: 4
+
+model:
+  arch: Unet
+  encoder: resnet34
+  encoder_weights: imagenet
+  classes: 1
+
+loss:
+  bce_weight: 1.0
+  dice_weight: 1.0
+
+train:
+  batch_size: 16
+  epochs: 50
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  early_stopping_patience: 10   # on val Dice
+  threshold: 0.5
+
+output:
+  checkpoint: checkpoints/unet_r34_best.pt
+  log_csv: results/train_log.csv
