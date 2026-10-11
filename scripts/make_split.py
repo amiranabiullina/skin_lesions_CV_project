@@ -12,10 +12,14 @@ import json
 from pathlib import Path
 
 import imagehash
+import matplotlib
 import numpy as np
 import pandas as pd
 from PIL import Image
 from tqdm import tqdm
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 META_CSV = ROOT / "splits" / "isic_metadata.csv"
@@ -23,6 +27,8 @@ IMG_DIR = ROOT / "data" / "processed" / "images"
 SEED = 42
 VAL_FRAC = 0.15
 PHASH_THRESHOLD = 6  # out of 64 bits
+MAX_PLAUSIBLE_GROUP = 20
+FIG_DIR = ROOT / "results" / "figures"
 
 
 class UnionFind:
@@ -52,6 +58,33 @@ def hamming_matrix(a, b):
     b = b.astype(np.int16)
     # number of differing bits = |a| + |b| - 2 * |a & b|
     return a.sum(1)[:, None] + b.sum(1)[None, :] - 2 * (a @ b.T)
+
+
+def plot_phash(pair_d, dup_pairs, ids, img_dir):
+    """Histogram of pairwise distances and a few matched pairs, to sanity-check the threshold."""
+    FIG_DIR.mkdir(parents=True, exist_ok=True)
+    fig, ax = plt.subplots(figsize=(7, 4))
+    ax.hist(pair_d, bins=np.arange(0, 65), log=True)
+    ax.axvline(PHASH_THRESHOLD + 0.5, c="red", ls="--", label=f"threshold <= {PHASH_THRESHOLD}")
+    ax.set_xlabel("pHash Hamming distance (64 bits)")
+    ax.set_ylabel("image pairs (log)")
+    ax.legend()
+    fig.tight_layout()
+    fig.savefig(FIG_DIR / "phash_distances.png", dpi=120)
+    plt.close(fig)
+
+    show = sorted(dup_pairs, key=lambda t: -t[2])[:8]  # the least similar accepted pairs
+    if not show:
+        return
+    fig, axes = plt.subplots(len(show), 2, figsize=(5, 2.5 * len(show)), squeeze=False)
+    for row, (a, b, d) in zip(axes, show):
+        for ax, k in zip(row, (a, b)):
+            ax.imshow(Image.open(img_dir / f"{ids[k]}.png").convert("RGB"))
+            ax.set_title(f"{ids[k]}  d={d}", fontsize=8)
+            ax.axis("off")
+    fig.tight_layout()
+    fig.savefig(FIG_DIR / "phash_pairs.png", dpi=90)
+    plt.close(fig)
 
 
 def main():
@@ -84,9 +117,13 @@ def main():
     for a, b, _ in dup_pairs:
         uf.union(a, b)
 
+    plot_phash(pair_d, dup_pairs, ids, args.image_dir)
+
     roots = [uf.find(i) for i in range(n)]
     meta["group"] = pd.factorize(pd.Series(roots))[0]
     group_sizes = meta.group.value_counts()
+    if group_sizes.max() > MAX_PLAUSIBLE_GROUP:
+        print(f"WARNING: largest group has {group_sizes.max()} images -> threshold is probably too loose")
 
     rng = np.random.default_rng(SEED)
     groups = np.sort(group_sizes.index.to_numpy())  # sorted copy, so the shuffle only depends on the seed

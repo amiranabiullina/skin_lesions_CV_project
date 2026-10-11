@@ -101,7 +101,7 @@ def plot_best_worst(ds, df, preds, out, k=4):
 
 def summarise(values):
     return {"mean": float(np.mean(values)), "std": float(np.std(values)),
-            "median": float(np.median(values))}
+            "median": float(np.median(values)), "p95": float(np.percentile(values, 95))}
 
 
 def main():
@@ -139,6 +139,8 @@ def main():
         "best_epoch": ckpt["epoch"],
         "dice": summarise(df.dice),
         "iou": summarise(df.iou),
+        # official ISIC 2018 metric: per-image Jaccard set to 0 below 0.65, then averaged
+        "isic_thresholded_jaccard": float(np.where(df.iou < 0.65, 0.0, df.iou).mean()),
         "hd95_px": summarise(df.hd95),
         "n_empty_predictions": int(sum(not p.any() for p in preds.values())),
         "n_iou_below_0.65": int((df.iou < 0.65).sum()),
