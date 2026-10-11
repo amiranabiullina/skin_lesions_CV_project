@@ -55,3 +55,11 @@ python train.py --config configs/unet_r34.yaml --overfit-batch   # sanity check
 python train.py --config configs/unet_r34.yaml
 python evaluate.py --config configs/unet_r34.yaml
 ```
+
+## Baseline results (validation split, 389 images, 256×256)
+
+| Dice | IoU | ISIC thresholded Jaccard | HD95 (median) | Train time | Inference |
+|---|---|---|---|---|---|
+| 0.901 ± 0.113 | 0.834 ± 0.142 | 0.796 | 7.2 px | 54.9 min (37 epochs, MacBook Air M4, MPS) | 9.0 ms / image |
+
+Details, split procedure and observations: [reports/milestone_baseline.md](reports/milestone_baseline.md).

@@ -1,0 +1,36 @@
+{
+  "split": "val (15% of ISIC 2018 Task 1 train, leakage-aware)",
+  "n_images": 389,
+  "resolution": "256x256",
+  "threshold": 0.5,
+  "best_epoch": 27,
+  "dice": {
+    "mean": 0.9009751965338424,
+    "std": 0.11311185217482606,
+    "median": 0.9363070122563794,
+    "p95": 0.9787984728854553
+  },
+  "iou": {
+    "mean": 0.8340821887074272,
+    "std": 0.142063227699213,
+    "median": 0.8802417831507366,
+    "p95": 0.9584777901402382
+  },
+  "isic_thresholded_jaccard": 0.7959024123104709,
+  "hd95_px": {
+    "mean": 13.655947183260842,
+    "std": 17.222701688114793,
+    "median": 7.211102550927978,
+    "p95": 52.362024124151446
+  },
+  "n_empty_predictions": 0,
+  "n_iou_below_0.65": 32,
+  "inference_ms_per_image": {
+    "mean": 9.001818748074584,
+    "std": 0.43928997117237584,
+    "batch_size": 1,
+    "device": "mps"
+  },
+  "train_time_s": 3294.5,
+  "epochs_run": 37
+}
