@@ -1,0 +1,39 @@
+{
+  "seed": 42,
+  "sift_min_inliers": 8,
+  "n_images": 2594,
+  "with_patient_id": 390,
+  "with_lesion_id": 1098,
+  "metadata_links": 55,
+  "near_duplicate_pairs": 134,
+  "pairs_with_5_to_7_inliers": 3442,
+  "phash_pairs_le_threshold_diagnostic": 182,
+  "n_groups": 2413,
+  "n_groups_size_gt1": 107,
+  "largest_group": 34,
+  "train": {
+    "images": 2205,
+    "groups": 2052
+  },
+  "val": {
+    "images": 389,
+    "groups": 361
+  },
+  "val_fraction": 0.15,
+  "max_train_val_sift_inliers": 7,
+  "diagnosis_train": {
+    "Nevus": 0.726,
+    "Seborrheic keratosis": 0.077,
+    "Melanoma in situ": 0.072,
+    "Melanoma, NOS": 0.063,
+    "Melanoma Invasive": 0.061,
+    "Benign": 0.001
+  },
+  "diagnosis_val": {
+    "Nevus": 0.676,
+    "Melanoma in situ": 0.1,
+    "Seborrheic keratosis": 0.098,
+    "Melanoma Invasive": 0.072,
+    "Melanoma, NOS": 0.054
+  }
+}

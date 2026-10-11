@@ -1,4 +1,5 @@
 """Dataset and augmentations for ISIC 2018 Task 1 (images pre-resized to 256x256)."""
+import random
 from pathlib import Path
 
 import albumentations as A
@@ -9,6 +10,21 @@ from torch.utils.data import Dataset
 
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
+
+
+def seed_worker(worker_id):
+    """DataLoader worker_init_fn: give every worker its own augmentation RNG.
+
+    Albumentations keeps its RNG inside the Compose object, so with spawn every worker would
+    receive an identical copy and produce identical augmentation sequences.
+    torch.initial_seed() differs per worker and is derived from the loader's seeded generator.
+    """
+    seed = torch.initial_seed() % 2**32
+    np.random.seed(seed)
+    random.seed(seed)
+    dataset = torch.utils.data.get_worker_info().dataset
+    if dataset.transform is not None:
+        dataset.transform.set_random_seed(seed)
 
 
 def get_transforms(train):

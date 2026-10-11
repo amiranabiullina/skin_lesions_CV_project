@@ -12,7 +12,7 @@ import pandas as pd
 import torch
 from torch.utils.data import DataLoader
 
-from src.dataset import LesionDataset, get_transforms
+from src.dataset import LesionDataset, get_transforms, seed_worker
 from src.losses import BCEDiceLoss
 from src.model import build_model
 from src.utils import get_device, load_config, set_seed, sync
@@ -25,7 +25,7 @@ def make_loader(cfg, csv_path, train):
     g = torch.Generator().manual_seed(cfg["seed"])
     return DataLoader(ds, batch_size=cfg["train"]["batch_size"], shuffle=train, drop_last=train,
                       num_workers=d["num_workers"], persistent_workers=d["num_workers"] > 0,
-                      generator=g)
+                      generator=g, worker_init_fn=seed_worker)
 
 
 def batch_dice_iou(logits, target, threshold):
