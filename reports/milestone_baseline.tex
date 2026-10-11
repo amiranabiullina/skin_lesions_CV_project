@@ -1,15 +1,15 @@
 \documentclass[11pt,a4paper]{article}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[margin=2.3cm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{enumitem}
-\usepackage[hidelinks]{hyperref}
+\usepackage{hyperref}
 
-\title{Skin Lesion Image Segmentation\\[2pt] \large Milestone 1: Data Pipeline and Baseline}
+\title{\textbf{Skin Lesion Image Segmentation}\\ \large Milestone 1: Data Pipeline and Baseline}
 \author{Ilmira Usmanova, Ilia Kulichenko, Alsu Nizamieva, Amira Nabiullina, Andrei Silantev\\
-\texttt{\{i.usmanova, i.kulichenko, a.nizamieva, a.nabiullina, a.silantev\}@innopolis.university}}
+{\small\texttt{\{i.usmanova, i.kulichenko, a.nizamieva, a.nabiullina, a.silantev\}@innopolis.university}}}
 \date{13 October 2026}
 
 \begin{document}
@@ -19,7 +19,7 @@
 
 This report covers the first milestone of the project plan: working dataset code and the first
 U-Net baseline. We implemented data loading, preprocessing, a leakage-aware train/validation split
-and augmentations, trained a U-Net~\cite{unet} with an ImageNet-pretrained ResNet-34 encoder, and evaluated
+and augmentations, trained a \textbf{U-Net}~\cite{unet} with an ImageNet-pretrained ResNet-34 encoder, and evaluated
 it on our validation split. The baseline reaches a \textbf{Dice of 0.901} and an \textbf{IoU of
 0.834}. The official test set has not been used yet; it stays reserved for the final evaluation.
 
@@ -38,7 +38,7 @@ and that no mask is empty.
 5\% of the image, and 101 images have a lesion larger than 70\%.
 
 \textbf{Preprocessing:}
-\begin{itemize}[nosep]
+\begin{itemize}[noitemsep]
   \item Images are resized once to 256$\times$256 with area interpolation and cached as lossless
         PNG; masks are resized with nearest-neighbour interpolation and binarised to $\{0, 1\}$.
         Resizing changes the lesion area fraction by at most 0.8 percentage points.
@@ -53,12 +53,13 @@ We visually checked that augmented masks stay aligned with the lesions and that 
 binary after augmentation.
 
 \section{Train/Validation Split}
+\label{sec:split}
 
 The plan specifies an 85\%/15\% split of the training images with a fixed seed. ISIC contains
 repeated photographs of the same lesion (follow-up visits, different zoom, crop or colour), so a
 purely random split would place copies of a lesion in both parts and inflate the validation
 scores. We therefore split by \emph{groups} of images that must stay together:
-\begin{itemize}[nosep]
+\begin{itemize}[noitemsep]
   \item images with the same \texttt{patient\_id} or \texttt{lesion\_id} in the ISIC metadata
         (available for only 390 and 1,098 images respectively);
   \item near-duplicate images, found by comparing all 3.36 million image pairs with SIFT keypoint
@@ -85,9 +86,9 @@ in both parts.}
 
 \section{Model and Training Setup}
 
-\begin{itemize}[nosep]
+\begin{itemize}[noitemsep]
   \item \textbf{Model:} U-Net with a ResNet-34 encoder pretrained on ImageNet
-        (\texttt{segmentation\_models\_pytorch}), one output channel, 24.4\,M parameters.
+        (segmentation\_\allowbreak models\_\allowbreak pytorch), one output channel, 24.4\,M parameters.
   \item \textbf{Training:} the whole network is fine-tuned with BCE + Dice loss (weights 1:1),
         AdamW (learning rate $10^{-4}$, weight decay $10^{-4}$, no scheduler), batch size 16, up
         to 50 epochs with early stopping on validation Dice (patience 10). The checkpoint with the
@@ -108,15 +109,15 @@ Jaccard is the official challenge score, where an image with IoU below 0.65 coun
 \centering
 \begin{tabular}{lccc}
 \toprule
-\textbf{Metric} & \textbf{Mean $\pm$ std} & \textbf{Median} & \textbf{95th percentile} \\
+\textbf{Metric} & \textbf{Mean $\pm$ std} & \textbf{Median} & \textbf{95th pct.} \\
 \midrule
 Dice                       & 0.901 $\pm$ 0.113 & 0.936 & 0.979 \\
 IoU                        & 0.834 $\pm$ 0.142 & 0.880 & 0.958 \\
-ISIC thresholded Jaccard   & 0.796             & --    & --    \\
+ISIC thresh.\ Jaccard   & 0.796             & --    & --    \\
 HD95 (px)                  & 13.7 $\pm$ 17.2   & 7.2   & 52.4  \\
 \midrule
-Training time              & \multicolumn{3}{l}{54.9 min (37 epochs, early stopped, best epoch 27)} \\
-Inference time             & \multicolumn{3}{l}{9.0 $\pm$ 0.4 ms per image (batch size 1)} \\
+Training time              & \multicolumn{3}{l}{54.9 min, 37 epochs (early stopped; best epoch 27)} \\
+Inference time             & \multicolumn{3}{l}{9.0 $\pm$ 0.4 ms per image (batch 1)} \\
 \bottomrule
 \end{tabular}
 \caption{U-Net baseline on the validation split (single run, seed 42).}
@@ -135,7 +136,7 @@ melanomas 0.886 ($n=88$) and seborrheic keratoses 0.828 ($n=38$).
 
 \section{Observations and Problems}
 
-\begin{itemize}[nosep]
+\begin{itemize}[noitemsep]
   \item \textbf{Training curves:} validation Dice passes 0.89 after 6 epochs and then plateaus at
         0.89--0.90. Training loss keeps decreasing (0.92 $\to$ 0.17) while validation loss
         flattens at about 0.22, so there is mild overfitting after epoch 15.
@@ -149,7 +150,7 @@ melanomas 0.886 ($n=88$) and seborrheic keratoses 0.828 ($n=38$).
   \item \textbf{Annotation noise:} some ground-truth masks are coarse or cover only part of the
         lesion, which limits the achievable Dice.
   \item \textbf{Data leakage:} near-duplicates were not found reliably by pHash; matching all
-        image pairs with SIFT was needed (Section~3).
+        image pairs with SIFT was needed (Section~\ref{sec:split}).
   \item \textbf{Implementation bug:} with macOS multiprocessing, every data-loading worker
         received the same copy of the augmentation random generator, so all workers produced
         identical augmentations. We found this in code review before training and fixed it by
@@ -160,7 +161,7 @@ melanomas 0.886 ($n=88$) and seborrheic keratoses 0.828 ($n=38$).
 
 \section{Next Steps}
 
-\begin{itemize}[nosep]
+\begin{itemize}[noitemsep]
   \item Train DeepLabV3+~\cite{deeplab} with exactly the same split and settings (20 Oct).
   \item Repeat both models with 3 random seeds, as planned, to report mean and standard deviation.
   \item Run the final evaluation of both models on the official 1,000-image test set.
