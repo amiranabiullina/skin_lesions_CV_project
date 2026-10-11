@@ -19,7 +19,7 @@
 
 This report covers the first milestone of the project plan: working dataset code and the first
 U-Net baseline. We implemented data loading, preprocessing, a leakage-aware train/validation split
-and augmentations, trained a \textbf{U-Net}~\cite{unet} with an ImageNet-pretrained ResNet-34 encoder, and evaluated
+and augmentations, trained a \textbf{U-Net} with an ImageNet-pretrained ResNet-34 encoder, and evaluated
 it on our validation split. The baseline reaches a \textbf{Dice of 0.901} and an \textbf{IoU of
 0.834}. The official test set has not been used yet; it stays reserved for the final evaluation.
 
@@ -27,7 +27,7 @@ it on our validation split. The baseline reaches a \textbf{Dice of 0.901} and an
 
 \section{Data Loading and Preprocessing}
 
-\textbf{Dataset:} ISIC 2018 Task 1~\cite{isic}, the 2,594 official training images with expert binary
+\textbf{Dataset:} ISIC 2018 Task 1, the 2,594 official training images with expert binary
 masks. We checked every extracted file against the size and CRC32 checksum of the official archive,
 verified that every image has a matching mask of the same size, that all masks are strictly binary,
 and that no mask is empty.
@@ -162,19 +162,10 @@ melanomas 0.886 ($n=88$) and seborrheic keratoses 0.828 ($n=38$).
 \section{Next Steps}
 
 \begin{itemize}[noitemsep]
-  \item Train DeepLabV3+~\cite{deeplab} with exactly the same split and settings (20 Oct).
+  \item Train DeepLabV3+ with exactly the same split and settings (20 Oct).
   \item Repeat both models with 3 random seeds, as planned, to report mean and standard deviation.
   \item Run the final evaluation of both models on the official 1,000-image test set.
   \item Boundary analysis of the failure cases (low contrast, bubbles and plates, markings).
 \end{itemize}
-
-\begin{thebibliography}{9}
-\bibitem{isic} N. Codella et al. Skin Lesion Analysis Toward Melanoma Detection 2018: A Challenge
-Hosted by the International Skin Imaging Collaboration (ISIC). arXiv:1902.03368, 2019.
-\bibitem{unet} O. Ronneberger, P. Fischer, T. Brox. U-Net: Convolutional Networks for Biomedical
-Image Segmentation. MICCAI, 2015.
-\bibitem{deeplab} L.-C. Chen et al. Encoder-Decoder with Atrous Separable Convolution for Semantic
-Image Segmentation. ECCV, 2018.
-\end{thebibliography}
 
 \end{document}
