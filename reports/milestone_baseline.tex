@@ -49,8 +49,10 @@ and that no mask is empty.
         saturation 0.2 and hue 0.02 ($p=0.5$). Geometric transforms are applied to the image and
         the mask together; colour jitter only to the image. Validation images are only normalised.
 \end{itemize}
-We visually checked that augmented masks stay aligned with the lesions and that masks remain
-binary after augmentation.
+We checked the augmentation pipeline on a sample figure of augmented image/mask pairs
+(4 images, 3 augmentations each), where the mask contours stay aligned with the lesions, and with
+an automatic test on 200 random training samples, which confirmed that the masks contain only the
+values 0 and 1.
 
 \section{Train/Validation Split}
 \label{sec:split}
