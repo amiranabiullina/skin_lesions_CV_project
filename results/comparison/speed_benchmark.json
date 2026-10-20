@@ -1,0 +1,27 @@
+{
+  "chip": "Apple M3",
+  "torch": "2.14.1",
+  "timed_epochs": 2,
+  "models": {
+    "U-Net": {
+      "device": "mps",
+      "epoch_s": [
+        70.05531104099646,
+        70.04969825000444
+      ],
+      "epoch_s_mean": 70.05250464550045,
+      "inference_ms_mean": 10.473155829677125,
+      "inference_ms_std": 1.0153176840716789
+    },
+    "DeepLabV3+": {
+      "device": "mps",
+      "epoch_s": [
+        92.2708142909978,
+        95.87167583400151
+      ],
+      "epoch_s_mean": 94.07124506249966,
+      "inference_ms_mean": 16.99698083961266,
+      "inference_ms_std": 0.4942108919196507
+    }
+  }
+}

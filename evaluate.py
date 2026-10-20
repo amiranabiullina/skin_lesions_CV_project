@@ -1,9 +1,10 @@
 """Evaluate the best checkpoint on the validation split.
 
     python evaluate.py --config configs/unet_r34.yaml
+    python evaluate.py --config configs/deeplabv3plus_r34.yaml
 
-Outputs: results/metrics_val.json, results/per_image_val.csv,
-         results/figures/learning_curves.png, results/figures/val_best_worst.png
+Outputs (in output.results_dir of the config, default results/):
+         metrics_val.json, per_image_val.csv, figures/learning_curves.png, figures/val_best_worst.png
 """
 import argparse
 import json
@@ -124,7 +125,7 @@ def main():
     df, preds = predict_all(model, ds, device, threshold)
     ms_mean, ms_std = time_inference(model, ds, device)
 
-    results_dir = Path("results")
+    results_dir = Path(cfg["output"].get("results_dir", "results"))
     fig_dir = results_dir / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
     df.to_csv(results_dir / "per_image_val.csv", index=False)
@@ -132,6 +133,8 @@ def main():
     summary_txt = Path(cfg["output"]["log_csv"]).with_name("train_summary.txt")
     train_info = dict(line.strip().split("=") for line in open(summary_txt)) if summary_txt.exists() else {}
     metrics = {
+        "model": f"{cfg['model']['arch']} / {cfg['model']['encoder']}",
+        "n_params": sum(p.numel() for p in model.parameters()),
         "split": "val (15% of ISIC 2018 Task 1 train, leakage-aware)",
         "n_images": len(df),
         "resolution": f"{d['image_size']}x{d['image_size']}",

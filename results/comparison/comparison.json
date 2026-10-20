@@ -1,0 +1,151 @@
+{
+  "summary": [
+    {
+      "model": "U-Net",
+      "params_M": 24.436369,
+      "dice_mean": 0.9009751965338424,
+      "dice_std": 0.11311185217482606,
+      "dice_median": 0.9363070122563794,
+      "iou_mean": 0.8340821887074272,
+      "iou_std": 0.142063227699213,
+      "iou_median": 0.8802417831507366,
+      "isic_jaccard": 0.7959024123104709,
+      "n_iou_below_0.65": 32,
+      "hd95_mean": 13.655947183260842,
+      "hd95_median": 7.211102550927978,
+      "hd95_p95": 52.362024124151446,
+      "train_min": 54.90833333333333,
+      "epochs_run": 37,
+      "best_epoch": 27,
+      "infer_ms": 9.001818748074584,
+      "infer_ms_std": 0.43928997117237584,
+      "device": "mps"
+    },
+    {
+      "model": "DeepLabV3+",
+      "params_M": 22.437457,
+      "dice_mean": 0.8994749532451913,
+      "dice_std": 0.10671402977816118,
+      "dice_median": 0.9334672357519458,
+      "iou_mean": 0.8303866888895791,
+      "iou_std": 0.13754315487775629,
+      "iou_median": 0.8752354048964218,
+      "isic_jaccard": 0.7867622716632323,
+      "n_iou_below_0.65": 35,
+      "hd95_mean": 12.26999492776443,
+      "hd95_median": 7.0710678118654755,
+      "hd95_p95": 41.6239973026334,
+      "train_min": 49.85333333333333,
+      "epochs_run": 31,
+      "best_epoch": 21,
+      "infer_ms": 14.668275840813294,
+      "infer_ms_std": 0.05739965039524196,
+      "device": "mps"
+    }
+  ],
+  "paired_tests": [
+    {
+      "metric": "dice",
+      "mean_diff": -0.0015002432886509092,
+      "median_diff": -0.003453456193698412,
+      "b_better": 165,
+      "a_better": 224,
+      "ties": 0,
+      "wilcoxon_stat": 31330.0,
+      "p_value": 0.0029481055642324775
+    },
+    {
+      "metric": "iou",
+      "mean_diff": -0.003695499817848139,
+      "median_diff": -0.0059171145014760285,
+      "b_better": 165,
+      "a_better": 224,
+      "ties": 0,
+      "wilcoxon_stat": 31167.0,
+      "p_value": 0.002314823834578487
+    },
+    {
+      "metric": "hd95",
+      "mean_diff": -1.385952255496411,
+      "median_diff": 0.1715728752538097,
+      "b_better": 158,
+      "a_better": 206,
+      "ties": 25,
+      "wilcoxon_stat": 31277.0,
+      "p_value": 0.33468497653615026
+    }
+  ],
+  "by_size": [
+    {
+      "size": "< 5%",
+      "n": 90,
+      "dice_unet": 0.8763218742695417,
+      "dice_dlv3p": 0.8679486957303122,
+      "delta_dice": -0.008373178539229476,
+      "hd95_median_unet": 3.0,
+      "hd95_median_dlv3p": 3.1622776601683795
+    },
+    {
+      "size": "5-20%",
+      "n": 140,
+      "dice_unet": 0.8953194192316811,
+      "dice_dlv3p": 0.9000274528063426,
+      "delta_dice": 0.00470803357466143,
+      "hd95_median_unet": 7.0710678118654755,
+      "hd95_median_dlv3p": 6.365804001812204
+    },
+    {
+      "size": "20-50%",
+      "n": 107,
+      "dice_unet": 0.9127877474162485,
+      "dice_dlv3p": 0.9043423320041017,
+      "delta_dice": -0.008445415412146717,
+      "hd95_median_unet": 10.44030650891055,
+      "hd95_median_dlv3p": 11.0
+    },
+    {
+      "size": "> 50%",
+      "n": 52,
+      "dice_unet": 0.934564905796769,
+      "dice_dlv3p": 0.9425365630639333,
+      "delta_dice": 0.007971657267164312,
+      "hd95_median_unet": 12.0,
+      "hd95_median_dlv3p": 12.205455727822638
+    }
+  ],
+  "by_diagnosis": [
+    {
+      "dx": "Melanoma (all)",
+      "n": 88,
+      "dice_unet": 0.8858926589239137,
+      "dice_dlv3p": 0.8840049086311853,
+      "delta_dice": -0.001887750292728363,
+      "hd95_median_unet": 12.367025750421098,
+      "hd95_median_dlv3p": 12.628943073749761
+    },
+    {
+      "dx": "Nevus",
+      "n": 263,
+      "dice_unet": 0.9165773347739139,
+      "dice_dlv3p": 0.9116504253578916,
+      "delta_dice": -0.0049269094160222515,
+      "hd95_median_unet": 6.0,
+      "hd95_median_dlv3p": 6.0
+    },
+    {
+      "dx": "Seborrheic keratosis",
+      "n": 38,
+      "dice_unet": 0.8279199584426564,
+      "dice_dlv3p": 0.8510332364134129,
+      "delta_dice": 0.023113277970756463,
+      "hd95_median_unet": 12.220369009914275,
+      "hd95_median_dlv3p": 12.569312656278587
+    }
+  ],
+  "iou_below_0.65": {
+    "unet_only": 12,
+    "dlv3p_only": 15,
+    "both": 20
+  },
+  "noise_threshold_dice": 0.01
+}
