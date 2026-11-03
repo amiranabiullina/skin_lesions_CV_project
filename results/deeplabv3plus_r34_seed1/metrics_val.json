@@ -1,0 +1,38 @@
+{
+  "model": "DeepLabV3Plus / resnet34",
+  "n_params": 22437457,
+  "split": "val (15% of ISIC 2018 Task 1 train, leakage-aware)",
+  "n_images": 389,
+  "resolution": "256x256",
+  "threshold": 0.5,
+  "best_epoch": 18,
+  "dice": {
+    "mean": 0.9029766660950014,
+    "std": 0.1100876830452359,
+    "median": 0.9401828298887123,
+    "p95": 0.9797027096592483
+  },
+  "iou": {
+    "mean": 0.8370425195533473,
+    "std": 0.1415857309078379,
+    "median": 0.8871179448715545,
+    "p95": 0.9602129982455888
+  },
+  "isic_thresholded_jaccard": 0.79446788643811,
+  "hd95_px": {
+    "mean": 12.061734698546589,
+    "std": 14.069276154935276,
+    "median": 6.324555320336759,
+    "p95": 42.64879827686439
+  },
+  "n_empty_predictions": 0,
+  "n_iou_below_0.65": 34,
+  "inference_ms_per_image": {
+    "mean": 14.320162094663829,
+    "std": 0.12461648011396692,
+    "batch_size": 1,
+    "device": "mps"
+  },
+  "train_time_s": 2711.9,
+  "epochs_run": 28
+}
