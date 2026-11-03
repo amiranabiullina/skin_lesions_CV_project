@@ -1,0 +1,4 @@
+best_epoch=18
+best_val_dice=0.900146
+epochs_run=28
+total_train_time_s=2878.3
