@@ -193,19 +193,20 @@ python demo/app.py --device cpu --port 8000 --no-browser    # other options
 
 The app reads the checkpoints from `checkpoints/` (paths as in `configs/*.yaml`, e.g.
 `checkpoints/unet_r34_best.pt`). Checkpoints are not in git: train the models or copy the `*_best.pt`
-files there. Seeds without a checkpoint are simply not offered.
+files there. Each model uses its seed-42 checkpoint, or the first available seed if that one is missing.
 
-**What it shows**
+**What it shows** (one page, scrolled top to bottom)
 
-- **13 validation images** (never seen in training) in four groups: typical cases, cases where U-Net wins
-  in every seed, cases where DeepLabV3+ wins in every seed, and the four failure cases. You can also
-  upload your own image (no ground truth, so no metrics).
-- **Views:** overlay, contours, probability map, and an error map against the ground truth
-  (correct / extra / missed pixels).
-- **Threshold slider:** masks redraw instantly, Dice / IoU / HD95 are recomputed.
-- **Seed selector** per model, inference time, agreement between the models, and the Dice of the same
-  image in all six runs.
-- **Results** and **How it works** tabs: the final tables, ablation results and figures.
+- **Try it:** drop a dermoscopic image or click a sample. The U-Net baseline and DeepLabV3+ masks appear next
+  to the image, with Dice / IoU / HD95, predicted lesion area and inference time; *Errors* colours the
+  correct, extra and missed pixels.
+- **Results:** the main numbers on the 389 validation images (mean over 3 seeds), Dice by lesion size and the
+  Dice of every training run.
+- **Failures:** four images that fail in all six runs; click one to run it.
+- **Method:** the pipeline in one line.
+
+`demo/test_images/` holds 13 validation images (never seen in training). Dropped onto the page they are
+recognised, so their ground truth and scores are shown; other images get masks and areas only.
 
 The pipeline is the same as in `evaluate.py` (resize to 256 × 256, ImageNet normalisation, sigmoid,
 threshold 0.5), so for the example images the live Dice equals `results/*/per_image_val.csv`.
