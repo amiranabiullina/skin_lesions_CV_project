@@ -220,6 +220,10 @@ class Demo:
         self.device = device
         self.examples = json.load(open(EXAMPLES / "examples.json")) if (EXAMPLES / "examples.json").exists() else []
         self.example_ids = {e["id"] for e in self.examples}
+        # the files in demo/test_images are byte-identical copies of demo/examples/<id>.jpg, so an uploaded
+        # test image is recognised and gets its ground truth (and therefore Dice / IoU / HD95)
+        self.hash_to_id = {hashlib.sha1((EXAMPLES / f"{i}.jpg").read_bytes()).hexdigest(): i
+                           for i in self.example_ids if (EXAMPLES / f"{i}.jpg").exists()}
         self.cache = OrderedDict()  # key -> {"probs": {...}, "gt": ...}
         self.summary = build_summary()
 
@@ -243,6 +247,9 @@ class Demo:
         raw = base64.b64decode(data.split(",", 1)[-1])
         if len(raw) > MAX_UPLOAD_BYTES:
             raise ValueError("image is larger than 25 MB")
+        known = self.hash_to_id.get(hashlib.sha1(raw).hexdigest())
+        if known:
+            return self._load_input({"example": known})
         img = cv2.imdecode(np.frombuffer(raw, np.uint8), cv2.IMREAD_COLOR)
         if img is None:
             raise ValueError("could not read the image (use JPG or PNG)")
@@ -257,7 +264,8 @@ class Demo:
         seeds = req.get("seeds", {})
         avail = self.pool.available()
         dh, dw = disp.shape[:2]
-        result = {"key": key, "width": dw, "height": dh, "threshold": threshold, "models": {}}
+        result = {"key": key, "width": dw, "height": dh, "threshold": threshold, "models": {},
+                  "example": key if key in self.example_ids else None}
         if uploaded:
             result["image"] = jpg_data_url(disp)
         else:

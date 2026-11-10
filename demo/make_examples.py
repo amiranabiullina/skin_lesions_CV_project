@@ -14,6 +14,7 @@ All images come from our validation split, so the models never saw them during t
 The raw ISIC images are looked up in data/raw/<folder> or ~/Downloads/<folder>.
 """
 import json
+import shutil
 from pathlib import Path
 
 import cv2
@@ -22,6 +23,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "demo" / "examples"
+TEST_DIR = ROOT / "demo" / "test_images"  # copies to drag into the page; the app recognises them
 IMG_NAME = "ISIC2018_Task1-2_Training_Input"
 MASK_NAME = "ISIC2018_Task1_Training_GroundTruth"
 SIZE = 256
@@ -97,6 +99,13 @@ def main():
             "original_size": [w, h], "eval_dice": dice,
         })
         print(isic_id, group, dice)
+
+    TEST_DIR.mkdir(exist_ok=True)
+    for f in TEST_DIR.glob("*.jpg"):
+        f.unlink()
+    for n, e in enumerate(entries, 1):
+        dx = {"Melanoma (all)": "melanoma", "Nevus": "nevus", "Seborrheic keratosis": "keratosis"}[e["diagnosis"]]
+        shutil.copyfile(OUT / f"{e['id']}.jpg", TEST_DIR / f"{n:02d}_{e['group']}_{dx}_{e['id']}.jpg")
 
     with open(OUT / "examples.json", "w") as f:
         json.dump(entries, f, indent=2)
