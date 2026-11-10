@@ -1,0 +1,38 @@
+{
+  "model": "Unet / resnet34",
+  "n_params": 24436369,
+  "split": "val (15% of ISIC 2018 Task 1 train, leakage-aware)",
+  "n_images": 389,
+  "resolution": "256x256",
+  "threshold": 0.5,
+  "best_epoch": 18,
+  "dice": {
+    "mean": 0.8969896394134271,
+    "std": 0.11427444749089849,
+    "median": 0.9378939995330375,
+    "p95": 0.9779252747735142
+  },
+  "iou": {
+    "mean": 0.8283718368777518,
+    "std": 0.14872817889162768,
+    "median": 0.8830512200483622,
+    "p95": 0.9568041146141919
+  },
+  "isic_thresholded_jaccard": 0.7780942297659325,
+  "hd95_px": {
+    "mean": 13.865942900832376,
+    "std": 16.76488164025997,
+    "median": 7.0710678118654755,
+    "p95": 52.0056440506072
+  },
+  "n_empty_predictions": 0,
+  "n_iou_below_0.65": 41,
+  "inference_ms_per_image": {
+    "mean": 9.500149169471115,
+    "std": 0.9013585316347152,
+    "batch_size": 1,
+    "device": "mps"
+  },
+  "train_time_s": 2149.7,
+  "epochs_run": 28
+}
