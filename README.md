@@ -353,10 +353,10 @@ python scripts/plot_failures.py      # failure-case figure                -> res
 
 | Member | Contribution |
 |---|---|
-| **Amira Nabiullina** | Coordination; data download and verification, EDA and preprocessing; leakage-aware split (metadata + SIFT/RANSAC near-duplicates); dataset class and augmentations; ablation (loss function, threshold sensitivity); live demo; README and technical summary |
-| **Ilia Kulichenko** | Training script and U-Net baseline experiments; U-Net seeds 1 and 2 |
-| **Alsu Nizamieva** | DeepLabV3+ experiments (seeds 42, 1, 2); paired model comparison (`compare.py`); runtime measurements (`benchmark_speed.py`) |
-| **Ilmira Usmanova** | Evaluation script (Dice, IoU, HD95); aggregation over seeds (`aggregate_seeds.py`); final result tables and figures |
-| **Andrei Silantev** | Boundary and failure-case analysis (`plot_failures.py`, `failure_analysis.md`) |
+| **Ilmira Usmanova** | Evaluation script (Dice, IoU, HD95), result tables and figures |
+| **Ilia Kulichenko** | Training script and U-Net baseline experiments |
+| **Alsu Nizamieva** | DeepLabV3+ experiments and runtime measurements |
+| **Amira Nabiullina** | Dataset code, preprocessing and splits; ablation; coordination; README and final summary |
+| **Andrei Silantev** | Boundary and failure-case analysis |
 
 All members prepared the final slides and the demo together, each presenting their own part.
