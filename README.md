@@ -6,6 +6,8 @@
 
 Computer Vision 2026 · Innopolis University
 
+**[▶ Watch the 2-minute demo video](https://drive.google.com/file/d/1Gixs-NJHt_aL1Hijb-RYLqIRrPCS-ViU/view?usp=sharing)**
+
 ![Python](https://img.shields.io/badge/python-3.14-3776AB?logo=python&logoColor=white)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.14-EE4C2C?logo=pytorch&logoColor=white)
 ![smp](https://img.shields.io/badge/segmentation__models__pytorch-0.5.0-4B8BBE)
@@ -181,6 +183,8 @@ python scripts/threshold_sensitivity.py                                 # thresh
 ```
 
 ## Live demo
+
+**▶ Demo video (2 min, with subtitles):** [Google Drive](https://drive.google.com/file/d/1Gixs-NJHt_aL1Hijb-RYLqIRrPCS-ViU/view?usp=sharing)
 
 A local web app that runs both trained models side by side. It works offline: the server needs only the
 packages from `requirements.txt`, and the page loads nothing from the internet.
