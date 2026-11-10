@@ -1,0 +1,74 @@
+[
+  {
+    "run": "BCE + Dice (baseline)",
+    "n_images": 389,
+    "dice": 0.9009751965338424,
+    "iou": 0.8340821887074272,
+    "isic_thresholded_jaccard": 0.7959024123104709,
+    "n_iou_below_0.65": 32,
+    "hd95_median": 7.211102550927978,
+    "hd95_p95": 52.362024124151446,
+    "n_empty_predictions": 0,
+    "best_epoch": 27,
+    "epochs_run": 37,
+    "train_time_min": 54.90833333333333,
+    "delta_dice_vs_baseline": 0.0,
+    "delta_dice_ci95": [
+      0.0,
+      0.0
+    ],
+    "n_images_dice_better": 0,
+    "n_images_dice_worse": 0,
+    "best_threshold": 0.4,
+    "dice_at_best_threshold": 0.901124,
+    "dice_spread_0p3_0p7": 0.0036970000000000613
+  },
+  {
+    "run": "BCE only",
+    "n_images": 389,
+    "dice": 0.8969896394134271,
+    "iou": 0.8283718368777518,
+    "isic_thresholded_jaccard": 0.7780942297659325,
+    "n_iou_below_0.65": 41,
+    "hd95_median": 7.0710678118654755,
+    "hd95_p95": 52.0056440506072,
+    "n_empty_predictions": 0,
+    "best_epoch": 18,
+    "epochs_run": 28,
+    "train_time_min": 35.82833333333333,
+    "delta_dice_vs_baseline": -0.003985557120415181,
+    "delta_dice_ci95": [
+      -0.012211424675878222,
+      0.0046402276347131555
+    ],
+    "n_images_dice_better": 187,
+    "n_images_dice_worse": 202,
+    "best_threshold": 0.4,
+    "dice_at_best_threshold": 0.899006,
+    "dice_spread_0p3_0p7": 0.02660399999999996
+  },
+  {
+    "run": "Dice only",
+    "n_images": 389,
+    "dice": 0.8942606497935576,
+    "iou": 0.8253755177459784,
+    "isic_thresholded_jaccard": 0.7867285325774136,
+    "n_iou_below_0.65": 35,
+    "hd95_median": 7.615773105863909,
+    "hd95_p95": 60.76882750431989,
+    "n_empty_predictions": 0,
+    "best_epoch": 10,
+    "epochs_run": 20,
+    "train_time_min": 26.6,
+    "delta_dice_vs_baseline": -0.006714546740284861,
+    "delta_dice_ci95": [
+      -0.015106256329393957,
+      0.0018906206156756636
+    ],
+    "n_images_dice_better": 172,
+    "n_images_dice_worse": 217,
+    "best_threshold": 0.9,
+    "dice_at_best_threshold": 0.895656,
+    "dice_spread_0p3_0p7": 0.0019050000000000455
+  }
+]
