@@ -1,5 +1,5 @@
-\documentclass[10pt,a4paper]{article}
-\usepackage[margin=1.8cm,top=1.5cm,bottom=1.7cm]{geometry}
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{booktabs}
@@ -19,7 +19,7 @@
 % Placeholder marker for the ablation numbers (remove once filled in).
 \newcommand{\TBD}[1]{\textcolor{red}{#1}}
 
-\title{\vspace{-1.2cm}\textbf{Skin Lesion Image Segmentation}\\ \large Final Technical Summary}
+\title{\vspace{-0.8cm}\textbf{Skin Lesion Image Segmentation}\\ \large Final Technical Summary}
 \author{Ilmira Usmanova, Ilia Kulichenko, Alsu Nizamieva, Amira Nabiullina, Andrei Silantev\\
 {\small\texttt{\{i.usmanova, i.kulichenko, a.nizamieva, a.nabiullina, a.silantev\}@innopolis.university}}}
 \date{\vspace{-0.4cm}10 November 2026}
@@ -39,12 +39,14 @@ computational cost?
 \section{Dataset}
 
 \textbf{ISIC 2018 Challenge, Task 1}: 2,594 official training dermoscopic images with expert binary masks
-(206 resolutions up to 6748$\times$4499 px; lesion area 0.3--98.7\% of the image, median 14\%).
+(206 different resolutions, from 576$\times$540 to 6748$\times$4499 px; the lesion covers 0.3--98.7\% of the
+image, median 14\%). Every file was checked against the official archive checksums.
 \textbf{Split:} ISIC contains repeated photographs of the same lesion, so a random split would leak copies into
 validation. We split by \emph{groups}: images sharing a \texttt{patient\_id} or \texttt{lesion\_id} (ISIC metadata)
 or detected as near-duplicates (SIFT matching + RANSAC check on all 3.36\,M image pairs, $\geq$8 inliers) always stay
 together: \textbf{2,205 train / 389 validation} images (85/15, seed 42). The official 1,000-image test set was not used.
-\textbf{Preprocessing:} resize to 256$\times$256 (area interpolation; masks nearest-neighbour), ImageNet normalisation. Augmentations: flips, rotations, affine, colour jitter.
+\textbf{Preprocessing:} resize to 256$\times$256 (area interpolation; masks nearest-neighbour), ImageNet normalisation.
+Training augmentations: flips, 90$^\circ$ rotations, affine (scale 0.9--1.1, shift, $\pm30^\circ$), colour jitter.
 
 \section{Method and Experimental Setup}
 
@@ -91,7 +93,8 @@ BCE only                   & 0.897 & 0.828 & 0.778 & 41 & \textbf{52.0} \\
 Dice only                  & 0.894 & 0.825 & 0.787 & 35 & 60.8 \\
 \bottomrule
 \end{tabular}
-\caption{Main comparison (top) and loss ablation (bottom); bold = better value.}
+\caption{Main comparison (top) and loss ablation (bottom); bold = better value. Per-seed numbers:
+\texttt{results/comparison/seeds\_summary.md}; ablation: \texttt{results/ablation/}.}
 \label{tab:results}
 \end{table}
 
@@ -107,13 +110,16 @@ predicts the mask at 1/4 resolution with only one skip connection, while its wid
 Dice changes by $\leq$0.006), so the comparison does not depend on it; only 0.1 or 0.9 hurt ($-0.012$ to $-0.031$).
 \textbf{Loss:} BCE + Dice is best on every overlap metric; dropping a term costs 0.004 (BCE only) or 0.007
 (Dice only) Dice, but with one seed and bootstrap intervals that include zero this is a trend, not a significant
-effect. BCE only gives soft probabilities and under-segments at 0.5 (9 more failures); Dice only has the worst border outliers.
+effect. BCE only gives soft, poorly calibrated probabilities (Dice spread 0.027 over thresholds 0.3--0.7) and
+under-segments at 0.5 (9 more failures); Dice only gives near-binary outputs but stops early (best epoch 10) and
+has the worst boundary outliers (HD95 p95 60.8 vs.\ 52.4\,px), because without the per-pixel BCE term isolated
+wrong regions are penalised less.
 
 \section{Failure Analysis}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\linewidth]{figures/failure_row.png}
+\includegraphics[width=\linewidth]{figures/failure_row.png}
 \caption{Failures shared by all six runs (IoU $<0.65$ in every seed of both models). Green = ground truth,
 blue = U-Net, orange = DeepLabV3+.}
 \label{fig:failures}
@@ -128,7 +134,8 @@ brown, well-pigmented lesions.
 \textbf{(c) Artefact edge} (Dice 0.13--0.33): a fold of immersion fluid under the contact plate forms the strongest
 closed contour around a light lesion, and the models follow it.
 \textbf{(d) Small lesion with a diffuse border} (Dice 0.61--0.67 U-Net, 0.53--0.58 DeepLabV3+): both models
-over-segment, DeepLabV3+ more so in every seed, which matches its coarser output.
+over-segment, DeepLabV3+ more so in every seed, which matches its coarser output. Cases (b) and (c) also explain why the better boundary statistics of DeepLabV3+ do not reduce the number
+of failures: its wider context shortens border errors but does not help when the wrong region is chosen.
 
 \section{Conclusions and Limitations}
 
@@ -144,22 +151,22 @@ laptops that throttle (10--20\% variation).
 
 \section{Reproducibility}
 
-\textbf{Code:} \url{https://github.com/amiranabiullina/skin_lesions_CV_project} (README with setup and run commands; committed split, configs, metrics, logs and figures).
+\textbf{Code:} \url{https://github.com/amiranabiullina/skin_lesions_CV_project} (README with setup, data download, training, evaluation and ablation commands; committed split, configs,
+per-image metrics, logs and figures).
 \textbf{Environment:} Python 3.14, PyTorch 2.14.1 (MPS), segmentation\_models\_pytorch 0.5.0, Albumentations 2.0.8;
 pinned \texttt{requirements.txt}. Trained on Apple-silicon MacBook Air laptops (M3/M4, MPS): about 50\,min per run; inference 10--17\,ms per image.
 
 \section{Members' Contributions}
-\vspace{-8pt}
 \begin{center}
 \small
-\begin{tabular}{ll}
+\begin{tabular}{@{}ll@{}}
 \toprule
 \textbf{Member} & \textbf{Contribution} \\
 \midrule
-Ilmira Usmanova  & Evaluation script (Dice, IoU, HD95), result tables and figures; slides \\
+Ilmira Usmanova  & Evaluation script (Dice, IoU, HD95), result tables and figures \\
 Ilia Kulichenko  & Training script and U-Net baseline experiments \\
 Alsu Nizamieva   & DeepLabV3+ experiments and runtime measurements \\
-Amira Nabiullina & Dataset code, preprocessing and splits; ablation; coordination, README, summary; demo \\
+Amira Nabiullina & Dataset code, preprocessing and splits; ablation; coordination, README and summary \\
 Andrei Silantev  & Boundary and failure-case analysis \\
 \bottomrule
 \end{tabular}
