@@ -11,28 +11,27 @@ python demo/app.py --device cpu --port 8000 --no-browser   # other options
 ```
 
 The checkpoints are read from `checkpoints/` (the paths in `configs/*.yaml`, e.g.
-`checkpoints/unet_r34_best.pt` for seed 42). Seeds whose checkpoint is missing are simply not offered.
+`checkpoints/unet_r34_best.pt` for seed 42). Each model uses its seed-42 checkpoint, or the first available seed if that one is missing.
 
 ## What it shows
 
-- **Live demo**: 13 validation images (never seen in training) in four groups: typical cases, cases where
-  U-Net wins in every seed, cases where DeepLabV3+ wins in every seed, and the four failure cases from
-  `results/failures/failure_analysis.md`. You can also upload your own image (no ground truth, so no metrics).
-  - Views: overlay, contours, probability map, and an error map against the ground truth
-    (correct / extra / missed pixels).
-  - Threshold slider: masks redraw instantly, Dice / IoU / HD95 are recomputed on the server.
-  - Seed selector for each model, inference time of the forward pass, agreement between the two models,
-    and the Dice of the same image in all six training runs.
-- **Results**: the final table (mean ± std over 3 seeds), Dice of every run, Dice by lesion size and
-  diagnosis, and the figures from `results/`. Ablation results appear automatically if
-  `results/ablation/*.json` / `*.png` exist.
-- **How it works**: pipeline, data split, training setup, metrics, team.
+One page that you scroll top to bottom:
+
+1. **Try it**: drop an image (or click a sample). The U-Net baseline and DeepLabV3+ masks are drawn next to the
+   image, with Dice / IoU / HD95, the predicted lesion area and the inference time. *Errors* colours the
+   correct, extra and missed pixels.
+2. **Results**: the main numbers on the 389 validation images (mean over 3 seeds), Dice by lesion size and
+   the Dice of every training run.
+3. **Failures**: four images that fail in all six runs; click one to run it.
+4. **Method**: the pipeline in one line.
+
+`demo/test_images/` holds the 13 example images (all from our validation split, never used for training).
+Dropped into the page they are recognised, so their ground truth and scores appear. Any other dermoscopic
+image works too, but then there is no ground truth and only the masks and areas are shown.
 
 The pipeline is the same as `evaluate.py`: resize to 256×256 (INTER_AREA), ImageNet normalisation,
 model, sigmoid, threshold 0.5. Metrics are computed at 256×256 with `src/metrics.py`, so for the example
 images the live Dice equals `results/*/per_image_val.csv` (checked: largest difference 5e-5).
-
-Keyboard: ← / → switch image, 1–4 switch view.
 
 ## Rebuilding the examples
 
@@ -44,10 +43,8 @@ python demo/make_examples.py
 
 ## Suggested 2-minute demo
 
-1. Typical melanoma (first image): both models agree with the ground truth, Dice ≈ 0.98.
-2. Switch to **Errors vs GT** (key 4) and open a *U-Net wins* and a *DeepLabV3+ wins* case: the difference is
-   at the border, and it holds in all three seeds (table at the bottom).
-3. A failure case, e.g. the immersion-fluid bubble: both models segment the bubble instead of the lesion.
-   Move the threshold slider: even at 0.9 the mask is still far too large (DeepLabV3+ seed 1: Dice 0.26 → 0.52),
-   so a different threshold does not fix it.
-4. Open **Results** for the final numbers.
+1. Drop `01_typical_melanoma_...jpg`: both models match the expert mask (Dice ≈ 0.98).
+2. Drop `09_deeplab_melanoma_...jpg` and switch to *Errors*: on this image DeepLabV3+ wins in all three seeds.
+3. Scroll to **Results**: overall the two models are equally accurate (Dice 0.903 vs 0.901). DeepLabV3+ makes fewer
+   large border errors, and U-Net is better on small lesions and 1.6x faster.
+4. Scroll to **Failures** and click the fluid-bubble case: both models outline the bubble instead of the lesion.

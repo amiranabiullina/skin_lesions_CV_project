@@ -7,194 +7,99 @@
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <div class="logo" aria-hidden="true"><span></span></div>
-    <div>
-      <div class="title">Skin lesion segmentation</div>
-      <div class="subtitle">ISIC 2018 Task 1 · U-Net vs DeepLabV3+ · ResNet-34 encoder</div>
-    </div>
+<header class="nav">
+  <div class="nav-in">
+    <span class="brand">Lesion segmentation</span>
+    <nav><a href="#try">Try it</a><a href="#results">Results</a><a href="#failures">Failures</a><a href="#method">Method</a></nav>
+    <span class="status" id="status"><i></i><span id="status-text">connecting…</span></span>
   </div>
-  <nav class="tabs" role="tablist">
-    <button class="tab active" data-tab="demo">Live demo</button>
-    <button class="tab" data-tab="results">Results</button>
-    <button class="tab" data-tab="method">How it works</button>
-  </nav>
-  <div class="status" id="status"><span class="dot"></span><span id="status-text">connecting…</span></div>
 </header>
 
 <main>
-  <!-- ======================================================= LIVE DEMO -->
-  <section id="tab-demo" class="tabpane active">
-    <div class="kpis" id="kpis"></div>
+  <!-- ============================================================ 1. TRY IT -->
+  <section id="try" class="hero">
+    <h1>Where is the lesion?</h1>
+    <p class="lead">Binary segmentation of skin lesions in dermoscopic images (ISIC 2018 Task 1).
+      Drop an image: the <b class="c-unet">U-Net baseline</b> and <b class="c-dlv3">DeepLabV3+</b> outline the lesion side by side.</p>
 
-    <div class="demo-grid">
-      <aside class="sidebar">
-        <label class="drop" id="drop">
-          <input type="file" id="file" accept="image/*" hidden>
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <div><b>Upload your own image</b><br><span>or drop a dermoscopic JPG / PNG here</span></div>
-        </label>
-        <div class="filters" id="filters">
-          <button class="chip active" data-group="all">All</button>
-          <button class="chip" data-group="typical">Typical</button>
-          <button class="chip" data-group="unet">U-Net better</button>
-          <button class="chip" data-group="deeplab">DeepLabV3+ better</button>
-          <button class="chip" data-group="failure">Failures</button>
-        </div>
-        <div class="gallery" id="gallery"></div>
-        <p class="hint">All examples are from our validation split, unseen in training. Keys: ← → switch image, 1–4 view.</p>
-      </aside>
+    <label class="drop" id="drop">
+      <input type="file" id="file" accept="image/*" hidden>
+      <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="drop-main">Drop an image here or click to choose</span>
+      <span class="drop-sub">JPG or PNG · images from <code>demo/test_images</code> come with ground truth</span>
+    </label>
 
-      <div class="workspace">
-        <div class="case-head">
-          <div>
-            <div class="case-title" id="case-title">Pick an image</div>
-            <div class="case-meta" id="case-meta"></div>
-          </div>
-          <div class="case-note" id="case-note"></div>
-        </div>
-
-        <div class="controls">
-          <div class="seg" id="view">
-            <button data-view="overlay" class="active">Overlay</button>
-            <button data-view="contour">Contours</button>
-            <button data-view="prob">Probability</button>
-            <button data-view="error">Errors vs GT</button>
-          </div>
-          <label class="thr">Threshold <input type="range" id="thr" min="0.05" max="0.95" step="0.05" value="0.5"><output id="thr-val">0.50</output></label>
-          <label class="toggle"><input type="checkbox" id="show-gt" checked> Ground truth</label>
-        </div>
-
-        <div class="panels">
-          <figure class="panel">
-            <div class="panel-head"><span class="swatch gt"></span>Input <span class="muted" id="gt-label">+ ground truth</span></div>
-            <div class="canvas-wrap"><canvas id="cv-input"></canvas><div class="spinner" hidden></div></div>
-            <div class="legend" id="legend"></div>
-          </figure>
-          <figure class="panel" id="panel-U-Net">
-            <div class="panel-head"><span class="swatch unet"></span>U-Net <span class="badge" hidden>better</span><span class="muted seed-tag"></span><label class="seed-sel" data-model="U-Net"></label></div>
-            <div class="canvas-wrap"><canvas id="cv-U-Net"></canvas><div class="spinner" hidden></div></div>
-            <div class="metrics" data-model="U-Net"></div>
-          </figure>
-          <figure class="panel" id="panel-DeepLabV3+">
-            <div class="panel-head"><span class="swatch dlv3"></span>DeepLabV3+ <span class="badge" hidden>better</span><span class="muted seed-tag"></span><label class="seed-sel" data-model="DeepLabV3+"></label></div>
-            <div class="canvas-wrap"><canvas id="cv-DeepLabV3+"></canvas><div class="spinner" hidden></div></div>
-            <div class="metrics" data-model="DeepLabV3+"></div>
-          </figure>
-        </div>
-
-        <div class="bottom-row">
-          <div class="card small" id="agreement"></div>
-          <div class="card small" id="seed-table"></div>
-        </div>
-        <div class="error-box" id="error" hidden></div>
-      </div>
+    <div class="samples">
+      <span class="samples-label">or pick a sample</span>
+      <div class="sample-row" id="samples"></div>
     </div>
   </section>
 
-  <!-- ======================================================= RESULTS -->
-  <section id="tab-results" class="tabpane">
-    <div class="results-grid">
-      <div class="card span2">
-        <h2>Validation results <span class="muted">389 images · 256×256 · mean ± std over 3 seeds</span></h2>
-        <div id="main-table"></div>
-        <p class="footnote" id="paired-note"></p>
+  <!-- ============================================================ 2. OUTPUT -->
+  <section id="output" class="output" hidden>
+    <div class="out-head">
+      <div>
+        <div class="out-title" id="out-title"></div>
+        <div class="out-note" id="out-note"></div>
       </div>
-      <div class="card">
-        <h2>Dice of every run</h2>
-        <div id="dotplot"></div>
-        <p class="footnote">Each dot is one training run (seeds 1, 2, 42). The model gap is about the same size as the spread between seeds.</p>
-      </div>
-      <div class="card">
-        <h2>Key findings</h2>
-        <ul class="findings" id="findings"></ul>
-      </div>
-      <div class="card">
-        <h2>Dice by lesion size</h2>
-        <div id="by-size"></div>
-      </div>
-      <div class="card">
-        <h2>Dice by diagnosis</h2>
-        <div id="by-dx"></div>
-      </div>
-      <div class="card span2" id="ablation-card" hidden>
-        <h2>Ablation</h2>
-        <div id="ablation"></div>
-      </div>
-      <div class="card span2">
-        <h2>Figures</h2>
-        <div class="figs" id="figs"></div>
+      <div class="seg" id="view">
+        <button data-view="mask" class="active">Masks</button>
+        <button data-view="error">Errors</button>
       </div>
     </div>
+
+    <div class="trio">
+      <figure><div class="frame"><canvas id="cv-input"></canvas><div class="spin" hidden></div></div>
+        <figcaption><span class="dot gt"></span><span id="cap-input">Image + ground truth</span></figcaption></figure>
+      <figure data-model="U-Net"><div class="frame"><canvas id="cv-U-Net"></canvas><div class="spin" hidden></div></div>
+        <figcaption><span class="dot unet"></span>U-Net <span class="tagline">baseline</span><span class="score" id="score-U-Net"></span></figcaption></figure>
+      <figure data-model="DeepLabV3+"><div class="frame"><canvas id="cv-DeepLabV3+"></canvas><div class="spin" hidden></div></div>
+        <figcaption><span class="dot dlv3"></span>DeepLabV3+<span class="score" id="score-DeepLabV3+"></span></figcaption></figure>
+    </div>
+    <div class="legend" id="legend"></div>
+
+    <div class="panel-row">
+      <div class="panel"><h3>Scores on this image</h3><div id="chart-image"></div></div>
+      <div class="panel"><h3>Lesion area, % of image</h3><div id="chart-area"></div></div>
+    </div>
+    <div class="error" id="error" hidden></div>
   </section>
 
-  <!-- ======================================================= METHOD -->
-  <section id="tab-method" class="tabpane">
-    <div class="card">
-      <h2>Pipeline</h2>
-      <div class="pipeline">
-        <div class="step"><div class="step-n">1</div><b>Dermoscopic image</b><span>any size, RGB</span></div>
-        <div class="arrow"></div>
-        <div class="step"><div class="step-n">2</div><b>Preprocess</b><span>resize 256×256 (area), ImageNet normalisation</span></div>
-        <div class="arrow"></div>
-        <div class="step"><div class="step-n">3</div><b>Encoder</b><span>ResNet-34, ImageNet-pretrained, shared by both models</span></div>
-        <div class="arrow"></div>
-        <div class="step fork">
-          <div class="step-n">4</div><b>Decoder</b>
-          <div class="fork-row">
-            <div class="mini unet"><b>U-Net</b><span>skip connections at every scale, full-resolution output · 24.4 M params</span></div>
-            <div class="mini dlv3"><b>DeepLabV3+</b><span>ASPP (rates 12/24/36), output stride 16, one skip, ×4 upsampling · 22.4 M params</span></div>
-          </div>
-        </div>
-        <div class="arrow"></div>
-        <div class="step"><div class="step-n">5</div><b>Mask</b><span>sigmoid → threshold 0.5</span></div>
-        <div class="arrow"></div>
-        <div class="step"><div class="step-n">6</div><b>Metrics</b><span>Dice, IoU, ISIC thresholded Jaccard, HD95</span></div>
-      </div>
+  <!-- ============================================================ 3. RESULTS -->
+  <section id="results" class="block">
+    <h2>Results on 389 validation images</h2>
+    <p class="sub">Mean over three training runs (seeds 1, 2, 42). Images never seen during training.</p>
+    <div class="stats" id="stats"></div>
+    <div class="panel-row">
+      <div class="panel"><h3>Dice by lesion size</h3><div id="chart-size"></div></div>
+      <div class="panel"><h3>Dice of each training run</h3><div id="chart-seeds"></div></div>
     </div>
-    <div class="method-grid">
-      <div class="card">
-        <h2>Data</h2>
-        <ul class="plain">
-          <li>ISIC 2018 Task 1 training set: <b>2,594</b> dermoscopic images with expert masks.</li>
-          <li>Leakage-aware 85/15 split: <b>2,205 train / 389 val</b>, grouped by patient / lesion ID and by near-duplicates (SIFT + RANSAC).</li>
-          <li>The official 1,000-image test set was kept aside.</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h2>Training</h2>
-        <ul class="plain">
-          <li>Same setup for both models; only the decoder differs.</li>
-          <li>Loss BCE + Dice, AdamW lr 1e-4, weight decay 1e-4, batch 16.</li>
-          <li>Up to 50 epochs, early stopping on val Dice (patience 10).</li>
-          <li>Augmentations: flips, 90° rotations, affine, colour jitter.</li>
-          <li>3 seeds per model (1, 2, 42), MacBook (Apple M-series, MPS).</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h2>Metrics</h2>
-        <ul class="plain">
-          <li><b>Dice</b> = 2|P∩G| / (|P|+|G|), <b>IoU</b> = |P∩G| / |P∪G|.</li>
-          <li><b>ISIC thresholded Jaccard</b>: IoU set to 0 when below 0.65 (official challenge metric).</li>
-          <li><b>HD95</b>: 95th percentile of boundary distances, pixels at 256×256.</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h2>Team</h2>
-        <ul class="plain team">
-          <li><b>Ilmira Usmanova</b> evaluation script (Dice, IoU, HD95), result tables and figures</li>
-          <li><b>Ilia Kulichenko</b> training script and U-Net baseline experiments</li>
-          <li><b>Alsu Nizamieva</b> DeepLabV3+ experiments and runtime measurements</li>
-          <li><b>Amira Nabiullina</b> dataset code, preprocessing and splits; ablation; coordination</li>
-          <li><b>Andrei Silantev</b> boundary and failure-case analysis</li>
-        </ul>
-      </div>
+    <ul class="takeaways" id="takeaways"></ul>
+  </section>
+
+  <!-- ============================================================ 4. FAILURES -->
+  <section id="failures" class="block">
+    <h2>Where both models fail</h2>
+    <p class="sub">These images fail (IoU &lt; 0.65) in all six training runs, so the cause is the image, not the architecture. Click one to run it.</p>
+    <div class="fails" id="fails"></div>
+  </section>
+
+  <!-- ============================================================ 5. METHOD -->
+  <section id="method" class="block">
+    <h2>Method</h2>
+    <div class="flow">
+      <div><b>Image</b><span>any size</span></div>
+      <div><b>Resize</b><span>256 × 256, ImageNet norm</span></div>
+      <div><b>ResNet-34 encoder</b><span>ImageNet-pretrained, shared</span></div>
+      <div class="split"><b><span class="c-unet">U-Net</span> / <span class="c-dlv3">DeepLabV3+</span></b><span>decoder is the only difference</span></div>
+      <div><b>Mask</b><span>sigmoid &gt; 0.5</span></div>
     </div>
+    <p class="sub">ISIC 2018 Task 1, 2,594 images, leakage-aware split 2,205 / 389 (patient, lesion and near-duplicate grouping).
+      BCE + Dice loss, AdamW 1e-4, batch 16, early stopping on validation Dice.</p>
   </section>
 </main>
 
-<div class="lightbox" id="lightbox" hidden><img alt=""><div class="lb-cap"></div></div>
+<footer>Computer Vision course project · ISIC 2018 Task 1 · runs locally, no internet needed</footer>
 <script src="/static/app.js"></script>
 </body>
 </html>
