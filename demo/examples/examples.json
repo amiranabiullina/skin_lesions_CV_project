@@ -1,0 +1,314 @@
+[
+  {
+    "id": "ISIC_0000145",
+    "group": "typical",
+    "note": "Melanoma with a clear border: both models are near-perfect in every seed.",
+    "diagnosis": "Melanoma (all)",
+    "area_pct": 30.4,
+    "size_bin": "20-50%",
+    "original_size": [
+      2048,
+      1536
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.9876,
+        "1": 0.9829,
+        "2": 0.9851
+      },
+      "DeepLabV3+": {
+        "42": 0.9808,
+        "1": 0.9829,
+        "2": 0.9826
+      }
+    }
+  },
+  {
+    "id": "ISIC_0000232",
+    "group": "typical",
+    "note": "Typical nevus, medium size.",
+    "diagnosis": "Nevus",
+    "area_pct": 17.9,
+    "size_bin": "5-20%",
+    "original_size": [
+      960,
+      645
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.9815,
+        "1": 0.9904,
+        "2": 0.9897
+      },
+      "DeepLabV3+": {
+        "42": 0.9842,
+        "1": 0.9843,
+        "2": 0.991
+      }
+    }
+  },
+  {
+    "id": "ISIC_0014652",
+    "group": "typical",
+    "note": "Large seborrheic keratosis.",
+    "diagnosis": "Seborrheic keratosis",
+    "area_pct": 58.1,
+    "size_bin": "> 50%",
+    "original_size": [
+      2592,
+      1936
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.9804,
+        "1": 0.9738,
+        "2": 0.9719
+      },
+      "DeepLabV3+": {
+        "42": 0.9722,
+        "1": 0.9681,
+        "2": 0.961
+      }
+    }
+  },
+  {
+    "id": "ISIC_0015255",
+    "group": "typical",
+    "note": "Lesion covering most of the image.",
+    "diagnosis": "Nevus",
+    "area_pct": 85.5,
+    "size_bin": "> 50%",
+    "original_size": [
+      6688,
+      4459
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.9818,
+        "1": 0.987,
+        "2": 0.9846
+      },
+      "DeepLabV3+": {
+        "42": 0.9881,
+        "1": 0.9899,
+        "2": 0.9873
+      }
+    }
+  },
+  {
+    "id": "ISIC_0013458",
+    "group": "typical",
+    "note": "Small seborrheic keratosis (4% of the image), still segmented well.",
+    "diagnosis": "Seborrheic keratosis",
+    "area_pct": 4.3,
+    "size_bin": "< 5%",
+    "original_size": [
+      4288,
+      2848
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.9689,
+        "1": 0.968,
+        "2": 0.9678
+      },
+      "DeepLabV3+": {
+        "42": 0.9546,
+        "1": 0.9643,
+        "2": 0.9677
+      }
+    }
+  },
+  {
+    "id": "ISIC_0013333",
+    "group": "unet",
+    "note": "Small seborrheic keratosis (3%): U-Net wins in all three seeds (Dice 0.91-0.93 vs 0.83-0.84).",
+    "diagnosis": "Seborrheic keratosis",
+    "area_pct": 2.9,
+    "size_bin": "< 5%",
+    "original_size": [
+      4288,
+      2848
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.9071,
+        "1": 0.9289,
+        "2": 0.9201
+      },
+      "DeepLabV3+": {
+        "42": 0.8369,
+        "1": 0.8381,
+        "2": 0.8308
+      }
+    }
+  },
+  {
+    "id": "ISIC_0013740",
+    "group": "unet",
+    "note": "Melanoma: U-Net is better in every seed; DeepLabV3+ leaves part of the lesion out.",
+    "diagnosis": "Melanoma (all)",
+    "area_pct": 10.0,
+    "size_bin": "5-20%",
+    "original_size": [
+      3008,
+      2000
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.8721,
+        "1": 0.5061,
+        "2": 0.8611
+      },
+      "DeepLabV3+": {
+        "42": 0.5655,
+        "1": 0.2153,
+        "2": 0.4509
+      }
+    }
+  },
+  {
+    "id": "ISIC_0012661",
+    "group": "deeplab",
+    "note": "Seborrheic keratosis: DeepLabV3+ wins in all three seeds, with a much tighter border (HD95 7-11 vs 14-43 px).",
+    "diagnosis": "Seborrheic keratosis",
+    "area_pct": 10.1,
+    "size_bin": "5-20%",
+    "original_size": [
+      2304,
+      1536
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.8013,
+        "1": 0.8174,
+        "2": 0.8084
+      },
+      "DeepLabV3+": {
+        "42": 0.9019,
+        "1": 0.9194,
+        "2": 0.9104
+      }
+    }
+  },
+  {
+    "id": "ISIC_0014931",
+    "group": "deeplab",
+    "note": "Melanoma with irregular pigment: DeepLabV3+ wins in all three seeds (Dice 0.89-0.95 vs 0.76-0.84).",
+    "diagnosis": "Melanoma (all)",
+    "area_pct": 26.6,
+    "size_bin": "20-50%",
+    "original_size": [
+      6688,
+      4439
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.757,
+        "1": 0.84,
+        "2": 0.8296
+      },
+      "DeepLabV3+": {
+        "42": 0.9205,
+        "1": 0.9535,
+        "2": 0.893
+      }
+    }
+  },
+  {
+    "id": "ISIC_0011117",
+    "group": "failure",
+    "note": "Failure (a): ground truth includes a pale halo that is hardly visible.",
+    "diagnosis": "Nevus",
+    "area_pct": 46.5,
+    "size_bin": "20-50%",
+    "original_size": [
+      1024,
+      768
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.3943,
+        "1": 0.3861,
+        "2": 0.4263
+      },
+      "DeepLabV3+": {
+        "42": 0.3782,
+        "1": 0.4416,
+        "2": 0.4211
+      }
+    }
+  },
+  {
+    "id": "ISIC_0013567",
+    "group": "failure",
+    "note": "Failure (b): faint pink lesion; the models pick a darker spot next to it.",
+    "diagnosis": "Melanoma (all)",
+    "area_pct": 4.1,
+    "size_bin": "< 5%",
+    "original_size": [
+      4288,
+      2848
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.0102,
+        "1": 0.6009,
+        "2": 0.0326
+      },
+      "DeepLabV3+": {
+        "42": 0.0104,
+        "1": 0.0376,
+        "2": 0.0
+      }
+    }
+  },
+  {
+    "id": "ISIC_0013966",
+    "group": "failure",
+    "note": "Failure (c): the edge of an immersion-fluid bubble is taken as the border.",
+    "diagnosis": "Nevus",
+    "area_pct": 2.7,
+    "size_bin": "< 5%",
+    "original_size": [
+      3008,
+      2000
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.2604,
+        "1": 0.3304,
+        "2": 0.131
+      },
+      "DeepLabV3+": {
+        "42": 0.254,
+        "1": 0.2576,
+        "2": 0.1777
+      }
+    }
+  },
+  {
+    "id": "ISIC_0012160",
+    "group": "failure",
+    "note": "Failure (d): small light nevus with a diffuse border, both over-segment.",
+    "diagnosis": "Nevus",
+    "area_pct": 1.8,
+    "size_bin": "< 5%",
+    "original_size": [
+      3008,
+      2000
+    ],
+    "eval_dice": {
+      "U-Net": {
+        "42": 0.6057,
+        "1": 0.6628,
+        "2": 0.6663
+      },
+      "DeepLabV3+": {
+        "42": 0.5268,
+        "1": 0.5542,
+        "2": 0.5755
+      }
+    }
+  }
+]
