@@ -353,10 +353,8 @@ python scripts/plot_failures.py      # failure-case figure                -> res
 
 | Member | Contribution |
 |---|---|
-| **Ilmira Usmanova** | Evaluation script (Dice, IoU, HD95), result tables and figures |
+| **Ilmira Usmanova** | Evaluation script (Dice, IoU, HD95), result tables and figures; presentation slides |
 | **Ilia Kulichenko** | Training script and U-Net baseline experiments |
 | **Alsu Nizamieva** | DeepLabV3+ experiments and runtime measurements |
-| **Amira Nabiullina** | Dataset code, preprocessing and splits; ablation; coordination; README and final summary |
+| **Amira Nabiullina** | Dataset code, preprocessing and splits; ablation; live demo; coordination; README and final summary |
 | **Andrei Silantev** | Boundary and failure-case analysis |
-
-All members prepared the final slides and the demo together, each presenting their own part.
