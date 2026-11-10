@@ -44,8 +44,7 @@ computational cost?
 validation. We split by \emph{groups}: images sharing a \texttt{patient\_id} or \texttt{lesion\_id} (ISIC metadata)
 or detected as near-duplicates (SIFT matching + RANSAC check on all 3.36\,M image pairs, $\geq$8 inliers) always stay
 together: \textbf{2,205 train / 389 validation} images (85/15, seed 42). The official 1,000-image test set was not used.
-\textbf{Preprocessing:} resize to 256$\times$256 (area interpolation; masks nearest-neighbour), ImageNet normalisation.
-Training augmentations: flips, 90$^\circ$ rotations, affine (scale 0.9--1.1, shift, $\pm30^\circ$), colour jitter.
+\textbf{Preprocessing:} resize to 256$\times$256 (area interpolation; masks nearest-neighbour), ImageNet normalisation. Augmentations: flips, rotations, affine, colour jitter.
 
 \section{Method and Experimental Setup}
 
@@ -108,8 +107,7 @@ predicts the mask at 1/4 resolution with only one skip connection, while its wid
 Dice changes by $\leq$0.006), so the comparison does not depend on it; only 0.1 or 0.9 hurt ($-0.012$ to $-0.031$).
 \textbf{Loss:} BCE + Dice is best on every overlap metric; dropping a term costs 0.004 (BCE only) or 0.007
 (Dice only) Dice, but with one seed and bootstrap intervals that include zero this is a trend, not a significant
-effect. BCE only gives soft, poorly calibrated probabilities (Dice spread 0.027 over thresholds 0.3--0.7) and
-under-segments at 0.5 (9 more failures); Dice only gives near-binary outputs but the worst boundary outliers.
+effect. BCE only gives soft probabilities and under-segments at 0.5 (9 more failures); Dice only has the worst border outliers.
 
 \section{Failure Analysis}
 
@@ -130,8 +128,7 @@ brown, well-pigmented lesions.
 \textbf{(c) Artefact edge} (Dice 0.13--0.33): a fold of immersion fluid under the contact plate forms the strongest
 closed contour around a light lesion, and the models follow it.
 \textbf{(d) Small lesion with a diffuse border} (Dice 0.61--0.67 U-Net, 0.53--0.58 DeepLabV3+): both models
-over-segment, DeepLabV3+ more so in every seed, which matches its coarser output. Cases (b) and (c) show why the
-better HD95 of DeepLabV3+ does not reduce failures: wider context does not help when the wrong region is chosen.
+over-segment, DeepLabV3+ more so in every seed, which matches its coarser output.
 
 \section{Conclusions and Limitations}
 
@@ -147,19 +144,27 @@ laptops that throttle (10--20\% variation).
 
 \section{Reproducibility}
 
-\textbf{Code:} \url{https://github.com/amiranabiullina/skin_lesions_CV_project} (README with setup, data download,
-training and evaluation commands; committed split, configs, per-image metrics, logs and figures).
+\textbf{Code:} \url{https://github.com/amiranabiullina/skin_lesions_CV_project} (README with setup and run commands; committed split, configs, metrics, logs and figures).
 \textbf{Environment:} Python 3.14, PyTorch 2.14.1 (MPS), segmentation\_models\_pytorch 0.5.0, Albumentations 2.0.8;
 pinned \texttt{requirements.txt}. Trained on Apple-silicon MacBook Air laptops (M3/M4, MPS): about 50\,min per run; inference 10--17\,ms per image.
 
 \section{Members' Contributions}
-
-\textbf{Amira Nabiullina:} data download and verification, preprocessing, leakage-aware split (SIFT+RANSAC
-duplicate detection), augmentations, training/evaluation code, U-Net seed-42 baseline, ablation, coordination,
-README and this summary. \textbf{Ilia Kulichenko:} U-Net runs with seeds 1 and 2.
-\textbf{Alsu Nizamieva:} DeepLabV3+ configuration, training (3 seeds) and evaluation, comparison script, runtime
-benchmark. \textbf{Ilmira Usmanova:} three-seed aggregation, final tables and figures, statistical comparison
-(bootstrap, Wilcoxon), results by lesion size and diagnosis. \textbf{Andrei Silantev:} boundary and failure-case
-analysis. All members prepared the slides and demo.
+\vspace{-8pt}
+\begin{center}
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Member} & \textbf{Contribution} \\
+\midrule
+Ilmira Usmanova  & Evaluation script (Dice, IoU, HD95), result tables and figures \\
+Ilia Kulichenko  & Training script and U-Net baseline experiments \\
+Alsu Nizamieva   & DeepLabV3+ experiments and runtime measurements \\
+Amira Nabiullina & Dataset code, preprocessing and splits; ablation; coordination, README and summary \\
+Andrei Silantev  & Boundary and failure-case analysis \\
+\midrule
+All members      & Slides and demo \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \end{document}
