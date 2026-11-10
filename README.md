@@ -135,10 +135,19 @@ Full analysis with per-seed Dice: [`results/failures/failure_analysis.md`](resul
 
 ## Ablation
 
-<!-- TODO(ablation): fill in when the ablation branch is merged: factor varied, config(s), results table, figure, how to run. -->
+<!-- TODO(ablation): add the table, figure and run command when the ablation branch is merged. -->
 
-> 🚧 The ablation / sensitivity experiment is being finalised and will be added here
-> (what was varied, the results table and the command to reproduce it).
+**1. Threshold sensitivity** (validation, U-Net seed 42 and DeepLabV3+ seeds 1, 2; no retraining).
+The probability threshold that turns the sigmoid output into a mask is varied from 0.1 to 0.9.
+
+- The default **0.5 is near-optimal**: the best threshold is 0.4, and it improves Dice by at most +0.0004.
+- Between 0.3 and 0.7, Dice changes by at most 0.006, so the results do not hinge on this choice.
+- At the extremes (0.1 or 0.9), Dice drops by 0.012–0.031 and the number of failed images (IoU < 0.65)
+  rises from 31–34 to 40–58.
+
+**2. Loss function** (BCE only vs Dice only vs BCE + Dice, retrained).
+
+> 🚧 Training in progress; results will be added here.
 
 ## Live demo
 
