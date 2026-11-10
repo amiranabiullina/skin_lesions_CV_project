@@ -135,26 +135,81 @@ Full analysis with per-seed Dice: [`results/failures/failure_analysis.md`](resul
 
 ## Ablation
 
-<!-- TODO(ablation): add the table, figure and run command when the ablation branch is merged. -->
+Two experiments on the validation split (389 images). Details and all tables:
+[`results/ablation/README.md`](results/ablation/README.md).
 
-**1. Threshold sensitivity** (validation, U-Net seed 42 and DeepLabV3+ seeds 1, 2; no retraining).
-The probability threshold that turns the sigmoid output into a mask is varied from 0.1 to 0.9.
+### 1. Loss function (U-Net, seed 42, retrained)
 
-- The default **0.5 is near-optimal**: the best threshold is 0.4, and it improves Dice by at most +0.0004.
-- Between 0.3 and 0.7, Dice changes by at most 0.006, so the results do not hinge on this choice.
-- At the extremes (0.1 or 0.9), Dice drops by 0.012–0.031 and the number of failed images (IoU < 0.65)
-  rises from 31–34 to 40–58.
+Only the loss changes; data, split, augmentations, optimiser, early stopping and seed are the same.
 
-**2. Loss function** (BCE only vs Dice only vs BCE + Dice, retrained).
+| Loss | Dice ↑ | IoU ↑ | ISIC thr. Jaccard ↑ | IoU < 0.65 ↓ | HD95 p95, px ↓ | Best / run epochs |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **BCE + Dice** (used) | **0.901** | **0.834** | **0.796** | **32** | 52.4 | 27 / 37 |
+| BCE only | 0.897 | 0.828 | 0.778 | 41 | **52.0** | 18 / 28 |
+| Dice only | 0.894 | 0.825 | 0.787 | 35 | 60.8 | 10 / 20 |
 
-> 🚧 Training in progress; results will be added here.
+<p align="center"><img src="results/ablation/threshold_sensitivity_loss.png" width="80%" alt="Dice vs threshold for the three losses"></p>
+
+- **The combined loss is best on every overlap metric.** Dropping a term costs 0.004 (BCE only) or 0.007
+  (Dice only) Dice, 2–3× the seed std of the baseline. The paired 95% bootstrap CIs still include zero
+  and each variant has one seed, so this is a trend, not a significant result.
+- **BCE only** gives soft, poorly calibrated probabilities: Dice depends strongly on the threshold
+  (spread 0.027 over 0.3–0.7), and at 0.5 it under-segments, with 9 more failed images.
+- **Dice only** gives almost binary outputs but stops early (best epoch 10) and has the worst boundary
+  outliers (HD95 p95 60.8 px).
+
+### 2. Threshold sensitivity (final models, no retraining)
+
+U-Net seed 42 and DeepLabV3+ seeds 1 and 2, threshold swept from 0.1 to 0.9.
+
+<p align="center"><img src="results/ablation/threshold_sensitivity.png" width="80%" alt="Metrics vs threshold"></p>
+
+- **The fixed threshold 0.5 is practically optimal.** The best threshold is 0.4 for all three runs and
+  gains at most +0.0004 Dice. The threshold was not tuned on validation, so the results are not
+  optimistically biased.
+- Over 0.3–0.7, Dice changes by at most 0.006, and the models stay within 0.004 Dice of each other, so
+  the "practically equal" conclusion does not depend on the threshold. Only the extremes hurt (0.1 or 0.9:
+  −0.012 to −0.031 Dice, 40–58 failed images instead of 31–34).
+
+```bash
+python train.py    --config configs/ablation/unet_r34_bce_only.yaml     # ~36 min on MPS
+python evaluate.py --config configs/ablation/unet_r34_bce_only.yaml
+python train.py    --config configs/ablation/unet_r34_dice_only.yaml    # ~27 min on MPS
+python evaluate.py --config configs/ablation/unet_r34_dice_only.yaml
+python scripts/summarize_loss_ablation.py                               # loss table + curves
+python scripts/threshold_sensitivity.py                                 # threshold sweep of the final models
+```
 
 ## Live demo
 
-<!-- TODO(demo): fill in when the demo branch is merged: folder, how to start it, screenshot. -->
+A local web app that runs both trained models side by side. It works offline: the server needs only the
+packages from `requirements.txt`, and the page loads nothing from the internet.
 
-> 🚧 A local web demo (upload or pick a validation image → masks of both models, overlays and metrics)
-> is being finalised. Start instructions and a screenshot will be added here.
+```bash
+source .venv/bin/activate
+python demo/app.py                                          # opens http://127.0.0.1:7860
+python demo/app.py --device cpu --port 8000 --no-browser    # other options
+```
+
+The app reads the checkpoints from `checkpoints/` (paths as in `configs/*.yaml`, e.g.
+`checkpoints/unet_r34_best.pt`). Checkpoints are not in git: train the models or copy the `*_best.pt`
+files there. Seeds without a checkpoint are simply not offered.
+
+**What it shows**
+
+- **13 validation images** (never seen in training) in four groups: typical cases, cases where U-Net wins
+  in every seed, cases where DeepLabV3+ wins in every seed, and the four failure cases. You can also
+  upload your own image (no ground truth, so no metrics).
+- **Views:** overlay, contours, probability map, and an error map against the ground truth
+  (correct / extra / missed pixels).
+- **Threshold slider:** masks redraw instantly, Dice / IoU / HD95 are recomputed.
+- **Seed selector** per model, inference time, agreement between the models, and the Dice of the same
+  image in all six runs.
+- **Results** and **How it works** tabs: the final tables, ablation results and figures.
+
+The pipeline is the same as in `evaluate.py` (resize to 256 × 256, ImageNet normalisation, sigmoid,
+threshold 0.5), so for the example images the live Dice equals `results/*/per_image_val.csv`.
+The 2-minute demo script is in [`demo/README.md`](demo/README.md).
 
 ## Setup
 
@@ -251,6 +306,7 @@ python scripts/plot_failures.py      # failure-case figure                -> res
 
 ```
 ├── configs/                    one YAML per run (model, seed, training, output paths)
+│   └── ablation/               BCE-only and Dice-only U-Net configs
 ├── src/
 │   ├── dataset.py              Dataset class and augmentations (albumentations)
 │   ├── model.py                U-Net / DeepLabV3+ builder (segmentation_models_pytorch)
@@ -266,14 +322,18 @@ python scripts/plot_failures.py      # failure-case figure                -> res
 │   ├── check_augmentations.py  augmentation sanity check and figure
 │   ├── benchmark_speed.py      training/inference speed of both models on one machine
 │   ├── aggregate_seeds.py      mean ± std over seeds, final table and figure
-│   └── plot_failures.py        failure-case figure
+│   ├── plot_failures.py        failure-case figure
+│   ├── threshold_sensitivity.py   threshold sweep 0.1–0.9 (ablation)
+│   └── summarize_loss_ablation.py loss ablation table and curves
 ├── train.py                    training with early stopping
 ├── evaluate.py                 validation metrics, timings, figures
 ├── compare.py                  paired U-Net vs DeepLabV3+ comparison
+├── demo/                       local web demo (app.py, static page, 13 example images)
 ├── splits/                     the exact train/val split, metadata, near-duplicate pairs
 ├── results/                    metrics, per-image CSVs, logs and figures of every run
 │   ├── comparison/             model comparison and 3-seed summary
-│   └── failures/               failure analysis
+│   ├── failures/               failure analysis
+│   └── ablation/               loss ablation and threshold sensitivity
 ├── reports/                    milestone reports (LaTeX / Markdown)
 └── requirements.txt
 ```
@@ -293,7 +353,7 @@ python scripts/plot_failures.py      # failure-case figure                -> res
 
 | Member | Contribution |
 |---|---|
-| **Amira Nabiullina** | Coordination; data download and verification, EDA and preprocessing; leakage-aware split (metadata + SIFT/RANSAC near-duplicates); dataset class and augmentations; README and technical summary |
+| **Amira Nabiullina** | Coordination; data download and verification, EDA and preprocessing; leakage-aware split (metadata + SIFT/RANSAC near-duplicates); dataset class and augmentations; ablation (loss function, threshold sensitivity); live demo; README and technical summary |
 | **Ilia Kulichenko** | Training script and U-Net baseline experiments; U-Net seeds 1 and 2 |
 | **Alsu Nizamieva** | DeepLabV3+ experiments (seeds 42, 1, 2); paired model comparison (`compare.py`); runtime measurements (`benchmark_speed.py`) |
 | **Ilmira Usmanova** | Evaluation script (Dice, IoU, HD95); aggregation over seeds (`aggregate_seeds.py`); final result tables and figures |
